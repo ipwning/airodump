@@ -59,7 +59,7 @@ typedef struct _beacon {
 } beacon;
 
 vector<beacon*> BEACON_VEC;
-vector<char *>  NAME;
+vector<char *>  NAME_VEC;
 
 void usage(){
     puts("syntax : airodump <interface>");
@@ -114,7 +114,7 @@ void airodump(uint8_t *packet, uint32_t size) {
         bPtr->rHdr = rHdrPtr;
         bPtr->bFrm = bFrmPtr;
         strncpy(name, (const char*)packet+0x46, tL);
-        for(nvPtr = NAME.begin(); nvPtr!= NAME.end(); ++nvPtr) {
+        for(nvPtr = NAME_VEC.begin(); nvPtr!= NAME_VEC.end(); ++nvPtr) {
             if(strncmp(*nvPtr, name, 0x400) == 0) {
                 state = false;
                 break;
@@ -132,7 +132,7 @@ void airodump(uint8_t *packet, uint32_t size) {
         } else {
             bPtr->bCnt = 1;
             nPtr = strdup(name);
-            NAME.push_back(nPtr);
+            NAME_VEC.push_back(nPtr);
             BEACON_VEC.push_back(bPtr);
         }
     } 
@@ -150,7 +150,7 @@ void print() {
     vector<beacon *>::iterator bvPtr;
     char *channel;
     puts("==================[BEACONS :)]=====================");
-    for(nvPtr = NAME.begin(), bvPtr = BEACON_VEC.begin(); nvPtr != NAME.end(), bvPtr != BEACON_VEC.end(); ++nvPtr, ++bvPtr) {
+    for(nvPtr = NAME_VEC.begin(), bvPtr = BEACON_VEC.begin(); nvPtr != NAME_VEC.end(), bvPtr != BEACON_VEC.end(); ++nvPtr, ++bvPtr) {
         channel = "IDK";
         if( (*bvPtr)->rHdr->cFlags & _2GHZ)        channel = "2GHZ";
         else if ( (*bvPtr)->rHdr->cFlags & _5GHZ)  channel = "5GHZ";
